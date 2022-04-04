@@ -1,5 +1,4 @@
 ; A boot sector that boots a C kernel in a 32-bit protected mode
-; Written by Jack Hudson
 
 [org 0x7c00]	; Tell the assembler where to load the boot sector
 KERNEL_OFFSET equ 0x1000	; Memory offset for kernel
@@ -30,6 +29,18 @@ load_kernel:
 	mov bx, MSG_LOAD_KERNEL	; Announce that we are loading the kernel
 	call print_string
 
+	; The following code was found on stackoverflow, and is currently being tested
+	;mov ax, KERNEL_OFFSET	; The address to read into
+	;mov es, ax	; Move the value to es
+	;xor bx, bx	; Clear bx register
+	;mov ah, 0x02	; Floppy function
+	;mov al, 1	; Read 1 sector
+	;mov ch, 0	; Cylinder 0
+	;mov cl, 2	; Sector to read
+	;mov dh, 0	; Head number
+	;mov dl, 0	; Drive number
+
+	; The following code is from the tutorial, but it seems to not work.
 	mov bx, KERNEL_OFFSET
 	mov dh, 15
 	mov dl, [BOOT_DRIVE]
