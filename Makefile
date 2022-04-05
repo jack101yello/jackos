@@ -23,6 +23,13 @@ kernel/kernel.elf: kernel/kernel_entry.o ${OBJ} # Generate the intermediate kern
 %.bin : %.asm # Generate binary files fom assembly files
 	nasm $< -f bin -o $@
 
+JackOS.vdi: JackOS.img # Generate the VirtualBox image
+	truncate -s 1M $<
+	VBoxManage convertfromraw $< $@
+
+JackOS.img: os-image
+	cp $< $@
+
 clean:
-	rm -fr *.bin *.o os-image *.map *.elf
+	rm -fr *.bin *.o os-image *.map *.elf *.img *.vdi
 	rm -fr kernel/*.o boot/*.bin drivers/*.o kernel/*.elf
