@@ -1,7 +1,7 @@
-C_SOURCES = $(wildcard kernel/*.c drivers/*.c)
-HEADERS = $(wildcard kernel/*.h drivers/*.h)
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h)
 
-OBJ = ${C_SOURCES:.c=.o} # Convert the .c filesnames to .o
+OBJ = ${C_SOURCES:.c=.o cpu/interrupt.o} # Convert the .c filesnames to .o
 
 all: os-image
  
@@ -32,4 +32,4 @@ JackOS.img: os-image
 
 clean:
 	rm -fr *.bin *.o os-image *.map *.elf *.img *.vdi
-	rm -fr kernel/*.o boot/*.bin drivers/*.o kernel/*.elf
+	rm -fr kernel/*.o boot/*.bin drivers/*.o kernel/*.elf cpu/*.o

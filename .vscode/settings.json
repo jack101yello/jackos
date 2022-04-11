@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "functional": "c"
+        "functional": "c",
+        "keyboard.h": "c",
+        "stdint.h": "c",
+        "low_level.h": "c",
+        "isr.h": "c",
+        "util.h": "c"
     }
 }
