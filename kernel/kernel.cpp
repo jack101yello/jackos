@@ -1,6 +1,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#include "../lib/misc.h"
  
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -41,15 +43,7 @@ static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
 {
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
- 
-size_t strlen(const char* str) 
-{
-	size_t len = 0;
-	while (str[len])
-		len++;
-	return len;
-}
- 
+
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
  
@@ -85,14 +79,30 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
  
 void terminal_putchar(char c) 
 {
-	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
+	if(c == '\n') {
+		terminal_row++;
 		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
+	}
+	else {
+		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+		terminal_column++;
+	}
+	if (terminal_column+1 == VGA_WIDTH) {
+		terminal_column = 0;
+		++terminal_row;
+	}
+	if(terminal_row == VGA_HEIGHT) { // Terminal scrolling
+		for(size_t y = 1; y < VGA_HEIGHT; y++) {
+			for(size_t x = 0; x < VGA_WIDTH; x++) {
+				const size_t index = y * VGA_WIDTH + x;
+				terminal_putentryat(terminal_buffer[index], terminal_color, x, y-1);
+				terminal_putentryat(' ', terminal_color, x, y);
+			}
+		}
+		terminal_row--;
 	}
 }
- 
+
 void terminal_write(const char* data, size_t size) 
 {
 	for (size_t i = 0; i < size; i++)
@@ -107,10 +117,13 @@ void terminal_writestring(const char* data)
 extern "C" {
 	void kernel_main(void) 
 	{
-	/* Initialize terminal interface */
-	terminal_initialize();
- 
-	/* Newline support is left as an exercise. */
-	terminal_writestring("Hello, kernel World!\n");
+		/* Initialize terminal interface */
+		terminal_initialize();
+
+		terminal_writestring("------------------\n");
+		terminal_writestring("Welcome to JackOS.\n");
+		terminal_writestring("------------------\n");
+		terminal_writestring("\n");
+		terminal_writestring("Kernel booted.\n");
 	}
 }
