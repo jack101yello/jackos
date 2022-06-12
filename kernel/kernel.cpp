@@ -1,9 +1,15 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
-#include "../lib/misc.h"
  
+size_t strlen(const char* str) 
+{
+	size_t len = 0;
+	while (str[len])
+		len++;
+	return len;
+}
+
 /* Hardware text mode color constants. */
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
@@ -115,5 +121,6 @@ extern "C" {
 		terminal_writestring("------------------\n");
 		terminal_writestring("\n");
 		terminal_writestring("Kernel booted.\n");
+
 	}
 }
